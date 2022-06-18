@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import ImageGallery from 'components/ImageGallery/';
 import Button from '../Button';
 import Loader from '../Loader';
@@ -108,5 +109,10 @@ class ImageGalleryInfo extends Component {
     }
   }
 }
+
+ImageGalleryInfo.propTypes = {
+  query: PropTypes.string.isRequired,
+  getModalImage: PropTypes.func.isRequired,
+};
 
 export default ImageGalleryInfo;
