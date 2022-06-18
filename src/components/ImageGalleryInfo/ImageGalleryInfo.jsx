@@ -40,6 +40,15 @@ class ImageGalleryInfo extends Component {
       if (nextPage === 1) {
         api
           .fetchImages(nextQuery, nextPage)
+          .then(images => {
+            if (!images.totalHits) {
+              return Promise.reject(
+                new Error(`Nothing found for the word: ${nextQuery}.`)
+              );
+            }
+
+            return images;
+          })
           .then(images =>
             this.setState({
               images: images.hits,

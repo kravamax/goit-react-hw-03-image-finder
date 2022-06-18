@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { ImSearch } from 'react-icons/im';
 import s from './Searchbar.module.css';
 
@@ -16,12 +16,13 @@ class Searchbar extends Component {
     event.preventDefault();
 
     if (this.state.query.trim() === '') {
-      alert('введите что-то');
+      alert('Typing something');
       return;
     }
 
     this.props.onSubmit(this.state.query);
     this.setState({ query: '' });
+    event.target.reset();
   };
 
   render() {
@@ -46,5 +47,9 @@ class Searchbar extends Component {
     );
   }
 }
+
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
 
 export default Searchbar;
