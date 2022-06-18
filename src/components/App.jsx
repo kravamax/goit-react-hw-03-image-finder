@@ -39,8 +39,6 @@ export class App extends Component {
         <Searchbar onSubmit={this.handleSubmit} />
         <ImageGalleryInfo
           query={this.state.query}
-          resetImages={this.state.images}
-          resetPage={this.state.page}
           getModalImage={this.getModalImage}
         />
       </div>

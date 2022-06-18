@@ -13,10 +13,10 @@ const Status = {
 
 class ImageGalleryInfo extends Component {
   state = {
-    images: null,
+    images: [],
     error: null,
     status: Status.IDLE,
-    page: null,
+    page: 1,
     totalPages: null,
   };
 
@@ -31,21 +31,23 @@ class ImageGalleryInfo extends Component {
 
     if (prevQuery !== nextQuery) {
       this.setState(() => ({
-        images: this.props.resetImages,
-        page: this.props.resetPage,
+        images: [],
+        page: 1,
         status: Status.PENDING,
       }));
 
-      api
-        .fetchImages(nextQuery, nextPage)
-        .then(images =>
-          this.setState({
-            images: images.hits,
-            totalPages: parseInt(images.totalHits / perPage),
-            status: Status.RESOLVED,
-          })
-        )
-        .catch(error => this.setState({ error, status: Status.REJECTED }));
+      if (nextPage === 1) {
+        api
+          .fetchImages(nextQuery, nextPage)
+          .then(images =>
+            this.setState({
+              images: images.hits,
+              totalPages: parseInt(images.totalHits / perPage),
+              status: Status.RESOLVED,
+            })
+          )
+          .catch(error => this.setState({ error, status: Status.REJECTED }));
+      }
     }
 
     if (prevPage !== nextPage) {
