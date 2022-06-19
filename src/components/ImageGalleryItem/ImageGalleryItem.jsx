@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import s from './ImageGalleryItem.module.css';
 
 const ImageGalleryItem = ({ image: { webformatURL, largeImageURL, tags } }) => {
-  console.log();
   return (
     <li className={s.galleryItem}>
       <img
