@@ -20,7 +20,7 @@ export class App extends Component {
     error: null,
     status: Status.IDLE,
     page: 1,
-    totalPages: null,
+    totalImages: null,
     modalImageURL: null,
     showModal: false,
   };
@@ -32,14 +32,13 @@ export class App extends Component {
     const prevPage = prevState.page;
     const nextPage = this.state.page;
 
-    const perPage = 12;
-
     if (prevQuery !== nextQuery) {
-      this.setState(() => ({
+      this.setState({
         images: [],
         page: 1,
         status: Status.PENDING,
-      }));
+        totalImages: null,
+      });
 
       if (nextPage === 1) {
         api
@@ -56,7 +55,7 @@ export class App extends Component {
           .then(images =>
             this.setState({
               images: images.hits,
-              totalPages: parseInt(images.totalHits / perPage),
+              totalImages: images.totalHits,
               status: Status.RESOLVED,
             })
           )
@@ -70,7 +69,11 @@ export class App extends Component {
       api
         .fetchImages(nextQuery, nextPage)
         .then(images => {
-          this.setState({ status: Status.RESOLVED });
+          this.setState({
+            images: images.hits,
+            totalImages: images.totalHits,
+            status: Status.RESOLVED,
+          });
           return this.addImages(images);
         })
         .catch(error => this.setState({ error, status: Status.REJECTED }));
@@ -78,6 +81,7 @@ export class App extends Component {
   }
 
   handleImageClick = ImageURL => {
+    console.log(ImageURL);
     this.setState({ modalImageURL: ImageURL });
 
     this.toggleModal();
@@ -104,51 +108,46 @@ export class App extends Component {
   };
 
   render() {
-    const { status, error, images, page, totalPages, showModal } = this.state;
+    const { status, error, images, totalImages, showModal } = this.state;
+    const totalAddImages = images.length;
 
-    if (status === Status.IDLE) {
-      return (
-        <div>
-          <Searchbar onSubmit={this.handleSubmit} />
-        </div>
-      );
-    }
-
-    if (status === Status.PENDING) {
-      return (
-        <>
-          {images && <ImageGallery images={images} />}
-          <Loader />
-        </>
-      );
-    }
-
-    if (status === Status.REJECTED) {
-      return (
-        <>
-          <Searchbar onSubmit={this.handleSubmit} />
-          <h2>{error.message}</h2>
-        </>
-      );
-    }
-
-    if (status === Status.RESOLVED) {
-      return (
-        <>
-          {showModal && (
-            <Modal
-              modalImageURL={this.state.modalImageURL}
-              onClose={this.toggleModal}
-            />
-          )}
-          <Searchbar onSubmit={this.handleSubmit} />
-          <ImageGallery
-            images={images}
-            handleImageClick={this.handleImageClick}
+    return (
+      <div>
+        {showModal && (
+          <Modal
+            modalImageURL={this.state.modalImageURL}
+            onClose={this.toggleModal}
           />
-          {page <= totalPages && <Button onClick={this.onButtonClick} />}
-        </>
-      );
-    }
+        )}
+
+        <Searchbar onSubmit={this.handleSubmit} />
+
+        {status === Status.PENDING ? (
+          <>
+            {images && (
+              <ImageGallery
+                images={images}
+                handleImageClick={this.handleImageClick}
+              />
+            )}
+            <Loader />
+          </>
+        ) : null}
+
+        {status === Status.REJECTED ? <h2>{error.message}</h2> : null}
+
+        {status === Status.RESOLVED ? (
+          <>
+            <ImageGallery
+              images={images}
+              handleImageClick={this.handleImageClick}
+            />
+            {totalAddImages < totalImages && (
+              <Button onClick={this.onButtonClick} />
+            )}
+          </>
+        ) : null}
+      </div>
+    );
   }
 }
