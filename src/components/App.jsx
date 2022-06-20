@@ -35,33 +35,30 @@ export class App extends Component {
     if (prevQuery !== nextQuery) {
       this.setState({
         status: Status.PENDING,
-        page: 1,
       });
 
-      if (nextPage === 1) {
-        api
-          .fetchImages(nextQuery, nextPage)
-          .then(images => {
-            if (!images.totalHits) {
-              return Promise.reject(
-                new Error(`Nothing found for the word: ${nextQuery}.`)
-              );
-            }
+      api
+        .fetchImages(nextQuery, nextPage)
+        .then(images => {
+          if (!images.totalHits) {
+            return Promise.reject(
+              new Error(`Nothing found for the word: ${nextQuery}.`)
+            );
+          }
 
-            return images;
+          return images;
+        })
+        .then(images =>
+          this.setState({
+            status: Status.RESOLVED,
+            images: images.hits,
+            totalImages: images.totalHits,
           })
-          .then(images =>
-            this.setState({
-              status: Status.RESOLVED,
-              images: images.hits,
-              totalImages: images.totalHits,
-            })
-          )
-          .catch(error => this.setState({ error, status: Status.REJECTED }));
-      }
+        )
+        .catch(error => this.setState({ error, status: Status.REJECTED }));
     }
 
-    if (prevPage !== nextPage) {
+    if (prevPage !== nextPage && nextPage !== 1) {
       this.setState({ status: Status.PENDING });
 
       api
@@ -90,7 +87,7 @@ export class App extends Component {
   };
 
   handleSubmit = query => {
-    this.setState({ query, images: [] });
+    this.setState({ query, images: [], totalImages: null, page: 1 });
   };
 
   toggleModal = () => {
