@@ -74,7 +74,6 @@ export class App extends Component {
   }
 
   handleImageClick = ImageURL => {
-    console.log(ImageURL);
     this.setState({ modalImageURL: ImageURL });
 
     this.toggleModal();
