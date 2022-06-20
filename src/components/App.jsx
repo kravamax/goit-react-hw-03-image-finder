@@ -34,10 +34,8 @@ export class App extends Component {
 
     if (prevQuery !== nextQuery) {
       this.setState({
-        images: [],
-        page: 1,
         status: Status.PENDING,
-        totalImages: null,
+        page: 1,
       });
 
       if (nextPage === 1) {
@@ -54,9 +52,9 @@ export class App extends Component {
           })
           .then(images =>
             this.setState({
+              status: Status.RESOLVED,
               images: images.hits,
               totalImages: images.totalHits,
-              status: Status.RESOLVED,
             })
           )
           .catch(error => this.setState({ error, status: Status.REJECTED }));
@@ -70,8 +68,6 @@ export class App extends Component {
         .fetchImages(nextQuery, nextPage)
         .then(images => {
           this.setState({
-            images: images.hits,
-            totalImages: images.totalHits,
             status: Status.RESOLVED,
           });
           return this.addImages(images);
@@ -94,7 +90,7 @@ export class App extends Component {
   };
 
   handleSubmit = query => {
-    this.setState({ query });
+    this.setState({ query, images: [] });
   };
 
   toggleModal = () => {
@@ -122,7 +118,7 @@ export class App extends Component {
 
         <Searchbar onSubmit={this.handleSubmit} />
 
-        {status === Status.PENDING ? (
+        {status === Status.PENDING && (
           <>
             {images && (
               <ImageGallery
@@ -132,21 +128,21 @@ export class App extends Component {
             )}
             <Loader />
           </>
-        ) : null}
+        )}
 
-        {status === Status.REJECTED ? <h2>{error.message}</h2> : null}
+        {status === Status.REJECTED && <h2>{error.message}</h2>}
 
-        {status === Status.RESOLVED ? (
+        {status === Status.RESOLVED && (
           <>
             <ImageGallery
               images={images}
               handleImageClick={this.handleImageClick}
             />
-            {totalAddImages < totalImages && (
+            {totalAddImages < totalImages ? (
               <Button onClick={this.onButtonClick} />
-            )}
+            ) : null}
           </>
-        ) : null}
+        )}
       </div>
     );
   }
