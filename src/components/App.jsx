@@ -100,16 +100,14 @@ export class App extends Component {
   };
 
   render() {
-    const { status, error, images, totalImages, showModal } = this.state;
+    const { status, error, images, totalImages, showModal, modalImageURL } =
+      this.state;
     const totalAddImages = images.length;
 
     return (
       <div>
         {showModal && (
-          <Modal
-            modalImageURL={this.state.modalImageURL}
-            onClose={this.toggleModal}
-          />
+          <Modal modalImageURL={modalImageURL} onClose={this.toggleModal} />
         )}
 
         <Searchbar onSubmit={this.handleSubmit} />
