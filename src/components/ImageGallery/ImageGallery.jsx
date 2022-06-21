@@ -7,12 +7,14 @@ class ImageGallery extends Component {
   handleItemClick = event => {
     event.preventDefault();
 
+    const { handleImageClick } = this.props;
+
     if (event.currentTarget === event.target) {
       return;
     }
 
     const imageURL = event.target.attributes.largeimg.value;
-    this.props.handleImageClick(imageURL);
+    handleImageClick(imageURL);
   };
 
   render() {

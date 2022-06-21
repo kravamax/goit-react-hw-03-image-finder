@@ -17,14 +17,17 @@ class Modal extends Component {
   }
 
   handleOverlayClick = event => {
+    const { onClose } = this.props;
     if (event.currentTarget === event.target) {
-      this.props.onClose();
+      onClose();
     }
   };
 
   handleEscClick = event => {
+    const { onClose } = this.props;
+
     if (event.code === 'Escape') {
-      this.props.onClose();
+      onClose();
     }
   };
 
